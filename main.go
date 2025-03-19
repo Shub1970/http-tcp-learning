@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"os"
 	"strings"
 )
 
@@ -39,7 +38,7 @@ func getLinesChannel(f io.ReadCloser) <-chan string {
 			part := string(buffer[:n])
 			parts := strings.Split(part, "\n")
 
-			// Process split parts
+			// Process split part
 			for i, p := range parts {
 				if i == 0 {
 					line += p // Append to the current line
@@ -51,28 +50,26 @@ func getLinesChannel(f io.ReadCloser) <-chan string {
 		}
 	}()
 
-	fmt.Printf("new data is push for reading %s", out)
-
 	return out
 }
 
 func main() {
-	listner, err := net.Listen("tcp", port)
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("erro listening for tcp traffic: %s\n", err)
 	}
 
-	defer listner.Close()
+	defer listener.Close()
 
-	fmt.Println("Listenin for TCP traffic on", port)
+	// fmt.Println("Listenin for TCP traffic on", port)
 
 	for {
-		conn, err := listner.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			log.Fatalf("error: %s\n", err)
 		}
 
-		fmt.Println("Accepted connection from", port)
+		// fmt.Println("Accepted connection from", port)
 
 		linesChan := getLinesChannel(conn)
 
@@ -80,7 +77,7 @@ func main() {
 			fmt.Println(line)
 		}
 
-		fmt.Println("connection to ", conn.RemoteAddr(), "closed")
+		// fmt.Println("connection to ", conn.RemoteAddr(), "closed")
 
 	}
 }
